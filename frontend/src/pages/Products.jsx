@@ -1,41 +1,38 @@
-<<<<<<< HEAD
-import { useState } from 'react'
-import { Search, Plus, X } from 'lucide-react'
-import { mockProducts } from '../services/mockData'
-=======
-
 import { useEffect, useState } from 'react'
-import { Search, Plus } from 'lucide-react'
->>>>>>> adfca8a (Connect products page to backend)
+import { Search, Plus, X } from 'lucide-react'
 import './Products.css'
 
-export default function Products() {
-  const [products, setProducts] = useState(mockProducts)
-  const [search, setSearch] = useState('')
-<<<<<<< HEAD
-  const [showModal, setShowModal] = useState(false)
-  const [form, setForm] = useState({ sku: '', name: '', category: '', reorderLevel: '', totalStock: '' })
-  const [error, setError] = useState('')
+const API_BASE = 'http://localhost:8000/api'
 
-=======
+export default function Products() {
   const [products, setProducts] = useState([])
+  const [search, setSearch] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [form, setForm] = useState({ sku: '', name: '', category: '', unit: '', reorderLevel: '', totalStock: '' })
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/products/')
+    fetch(`${API_BASE}/products/`)
       .then(response => response.json())
-      .then(data => setProducts(data))
-      .catch(error => console.error('Failed to fetch products:', error))
+      .then(data => {
+        setProducts(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Failed to fetch products:', err)
+        setLoading(false)
+      })
   }, [])
 
->>>>>>> adfca8a (Connect products page to backend)
   const filtered = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.sku.toLowerCase().includes(search.toLowerCase())
   )
 
   function getStatus(product) {
-    if (product.totalStock === 0) return { label: 'Out of stock', className: 'status-critical' }
-    if (product.totalStock <= product.reorderLevel) return { label: 'Low stock', className: 'status-warning' }
+    if (product.total_stock === 0) return { label: 'Out of stock', className: 'status-critical' }
+    if (product.total_stock <= product.reorder_level) return { label: 'Low stock', className: 'status-warning' }
     return { label: 'In stock', className: 'status-ok' }
   }
 
@@ -44,29 +41,41 @@ export default function Products() {
   }
 
   function openModal() {
-    setForm({ sku: '', name: '', category: '', reorderLevel: '', totalStock: '' })
+    setForm({ sku: '', name: '', category: '', unit: '', reorderLevel: '', totalStock: '' })
     setError('')
     setShowModal(true)
   }
 
-  function handleCreate(e) {
+  async function handleCreate(e) {
     e.preventDefault()
     if (!form.sku || !form.name || !form.category) {
       setError('SKU, name, and category are required')
       return
     }
-    // TODO: replace with real API call once teammate's endpoint is ready
-    // e.g. axios.post('/api/products/', form)
-    const newProduct = {
-      id: products.length + 1,
+
+    const payload = {
       sku: form.sku,
       name: form.name,
       category: form.category,
-      reorderLevel: Number(form.reorderLevel) || 0,
-      totalStock: Number(form.totalStock) || 0,
+      unit: form.unit || 'pcs',
+      reorder_level: Number(form.reorderLevel) || 0,
+      total_stock: Number(form.totalStock) || 0,
     }
-    setProducts(prev => [...prev, newProduct])
-    setShowModal(false)
+
+    try {
+      const response = await fetch(`${API_BASE}/products/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!response.ok) throw new Error('Failed to create product')
+      const created = await response.json()
+      setProducts(prev => [...prev, created])
+      setShowModal(false)
+    } catch (err) {
+      console.error(err)
+      setError('Could not create product, check backend connection')
+    }
   }
 
   return (
@@ -95,15 +104,20 @@ export default function Products() {
             <th>SKU</th>
             <th>Name</th>
             <th>Category</th>
+            <th>Unit</th>
             <th>Reorder Level</th>
             <th>Total Stock</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.length === 0 ? (
+          {loading ? (
             <tr>
-              <td colSpan={6} className="empty-state">No products found</td>
+              <td colSpan={7} className="empty-state">Loading products...</td>
+            </tr>
+          ) : filtered.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="empty-state">No products found</td>
             </tr>
           ) : (
             filtered.map(p => {
@@ -113,8 +127,9 @@ export default function Products() {
                   <td>{p.sku}</td>
                   <td>{p.name}</td>
                   <td>{p.category}</td>
+                  <td>{p.unit}</td>
                   <td>{p.reorder_level}</td>
-                  <td>{p.totalStock}</td>
+                  <td>{p.total_stock}</td>
                   <td><span className={`status-badge ${status.className}`}>{status.label}</span></td>
                 </tr>
               )
@@ -144,6 +159,16 @@ export default function Products() {
               <div className="form-row">
                 <label>Category</label>
                 <input value={form.category} onChange={e => updateField('category', e.target.value)} placeholder="e.g. Electronics" />
+              </div>
+              <div className="form-row">
+                <label>Unit of Measure</label>
+                <select value={form.unit} onChange={e => updateField('unit', e.target.value)}>
+                  <option value="">Select unit</option>
+                  <option value="pcs">Pieces (pcs)</option>
+                  <option value="kg">Kilograms (kg)</option>
+                  <option value="ltr">Litres (ltr)</option>
+                  <option value="box">Box</option>
+                </select>
               </div>
               <div className="form-row">
                 <label>Reorder Level</label>
