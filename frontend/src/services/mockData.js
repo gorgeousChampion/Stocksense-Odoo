@@ -30,3 +30,47 @@ export function getDashboardStats() {
   const recentMovements = mockLedger.slice(-4).reverse()
   return { totalStock, totalSkus, lowStockCount, recentMovements }
 }
+
+export const mockRiskItems = [
+  {
+    id: 1,
+    product: 'Wireless Mouse',
+    sku: 'MOU-002',
+    warehouse: 'Warehouse 2',
+    currentStock: 8,
+    reorderLevel: 20,
+    dailyUsage: 3,
+    severity: 'critical',
+    reason: 'Stock is below reorder level and depleting fast',
+    suggestedAction: 'Replenish 40 units, or transfer 15 units from Main Warehouse',
+  },
+  {
+    id: 2,
+    product: 'USB-C Cable',
+    sku: 'CBL-004',
+    warehouse: 'Warehouse 2',
+    currentStock: 0,
+    reorderLevel: 100,
+    dailyUsage: 5,
+    severity: 'critical',
+    reason: 'Out of stock, active demand recorded in ledger',
+    suggestedAction: 'Replenish immediately, 100 units recommended',
+  },
+  {
+    id: 3,
+    product: 'Office Chair',
+    sku: 'CHR-003',
+    warehouse: 'Main Warehouse',
+    currentStock: 35,
+    reorderLevel: 10,
+    dailyUsage: 2,
+    severity: 'watch',
+    reason: 'Above reorder level but usage trending upward',
+    suggestedAction: 'No action needed yet, monitor next 7 days',
+  },
+]
+
+export function estimateDaysRemaining(item) {
+  if (item.dailyUsage <= 0) return null
+  return Math.floor(item.currentStock / item.dailyUsage)
+}

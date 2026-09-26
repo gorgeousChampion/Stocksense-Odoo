@@ -1,0 +1,107 @@
+.risk-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.risk-card {
+  display: flex;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.risk-card.risk-critical {
+  border-left-color: #dc2626;
+}
+
+.risk-card.risk-watch {
+  border-left-color: #b45309;
+}
+
+.risk-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.risk-critical .risk-icon {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.risk-watch .risk-icon {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.risk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.risk-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.risk-product {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.risk-sku {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.risk-badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-critical {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.badge-watch {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.risk-meta {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.risk-reason {
+  font-size: 13px;
+  color: #334155;
+}
+
+.risk-action {
+  font-size: 13px;
+  font-weight: 600;
+  color: #047857;
+}
