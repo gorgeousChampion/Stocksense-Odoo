@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
 import Dashboard from './pages/Dashboard'
 import Products from './pages/Products'
-import Warehouses from './pages/Warehouses'
+import Settings from './pages/Settings'
 import Operations from './pages/Operations'
 import Ledger from './pages/Ledger'
 import RiskCenter from './pages/RiskCenter'
@@ -14,7 +14,7 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/warehouses" element={<Warehouses />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/operations" element={<Operations />} />
           <Route path="/ledger" element={<Ledger />} />
           <Route path="/risk" element={<RiskCenter />} />

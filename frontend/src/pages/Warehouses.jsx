@@ -5,10 +5,6 @@ import './Warehouses.css'
 export default function Warehouses() {
   return (
     <div className="warehouses-page">
-      <div className="page-header">
-        <h1>Warehouses</h1>
-      </div>
-
       <div className="warehouse-grid">
         {mockWarehouses.map(w => (
           <div key={w.id} className="warehouse-card">
