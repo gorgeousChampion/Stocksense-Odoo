@@ -1,15 +1,33 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import { Search, Plus, X } from 'lucide-react'
 import { mockProducts } from '../services/mockData'
+=======
+
+import { useEffect, useState } from 'react'
+import { Search, Plus } from 'lucide-react'
+>>>>>>> adfca8a (Connect products page to backend)
 import './Products.css'
 
 export default function Products() {
   const [products, setProducts] = useState(mockProducts)
   const [search, setSearch] = useState('')
+<<<<<<< HEAD
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({ sku: '', name: '', category: '', reorderLevel: '', totalStock: '' })
   const [error, setError] = useState('')
 
+=======
+  const [products, setProducts] = useState([])
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/products/')
+      .then(response => response.json())
+      .then(data => setProducts(data))
+      .catch(error => console.error('Failed to fetch products:', error))
+  }, [])
+
+>>>>>>> adfca8a (Connect products page to backend)
   const filtered = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.sku.toLowerCase().includes(search.toLowerCase())
@@ -95,7 +113,7 @@ export default function Products() {
                   <td>{p.sku}</td>
                   <td>{p.name}</td>
                   <td>{p.category}</td>
-                  <td>{p.reorderLevel}</td>
+                  <td>{p.reorder_level}</td>
                   <td>{p.totalStock}</td>
                   <td><span className={`status-badge ${status.className}`}>{status.label}</span></td>
                 </tr>
