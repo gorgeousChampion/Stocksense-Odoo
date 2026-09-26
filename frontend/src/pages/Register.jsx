@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Boxes } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
-export default function Login() {
+export default function Register() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -11,11 +11,11 @@ export default function Login() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (!email || !password) {
-      setError('Enter both email and password')
+    if (!name || !email || !password) {
+      setError('Fill in all fields')
       return
     }
-    // TODO: replace with real auth call once backend endpoint is ready
+    // TODO: replace with real registration call once backend endpoint is ready
     navigate('/dashboard')
   }
 
@@ -25,6 +25,17 @@ export default function Login() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
           <Boxes size={22} color="#047857" />
           <span style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>StockSense</span>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="Your name"
+            style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: '8px 10px', fontSize: 14 }}
+          />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -52,12 +63,11 @@ export default function Login() {
         {error && <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', padding: '8px 12px', borderRadius: 8 }}>{error}</div>}
 
         <button type="submit" style={{ background: '#047857', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 14px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-          Log In
+          Sign Up
         </button>
 
-        <div style={{ fontSize: 13, color: '#64748b', textAlign: 'center' }}>Forgot password? OTP reset coming soon.</div>
         <div style={{ fontSize: 13, color: '#64748b', textAlign: 'center' }}>
-          New here? <Link to="/register" style={{ color: '#047857', fontWeight: 600 }}>Create an account</Link>
+          Already have an account? <Link to="/" style={{ color: '#047857', fontWeight: 600 }}>Log in</Link>
         </div>
       </form>
     </div>

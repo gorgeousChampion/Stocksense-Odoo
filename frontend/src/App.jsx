@@ -7,12 +7,14 @@ import Operations from './pages/Operations'
 import Ledger from './pages/Ledger'
 import RiskCenter from './pages/RiskCenter'
 import Login from './pages/Login'
+import Register from './pages/Register'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
