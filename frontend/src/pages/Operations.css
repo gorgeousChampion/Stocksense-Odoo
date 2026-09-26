@@ -1,0 +1,89 @@
+.operations-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-item:hover {
+  color: #0f172a;
+}
+
+.tab-item.active {
+  color: #047857;
+  border-bottom-color: #047857;
+}
+
+.operation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 420px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.form-row select,
+.form-row input {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.form-row select:focus,
+.form-row input:focus {
+  outline: none;
+  border-color: #047857;
+}
+
+.form-status {
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.form-status.success {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.form-status.error {
+  background: #fef2f2;
+  color: #dc2626;
+}

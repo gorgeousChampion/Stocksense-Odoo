@@ -1,0 +1,64 @@
+.warehouses-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.warehouse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.warehouse-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.warehouse-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #ecfdf5;
+  color: #047857;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.warehouse-info {
+  flex: 1;
+}
+
+.warehouse-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.warehouse-location {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.warehouse-stock {
+  text-align: right;
+}
+
+.stock-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.stock-label {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
