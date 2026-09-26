@@ -15,13 +15,22 @@ export const productOptions = mockProducts.map(p => ({ id: p.id, label: `${p.sku
 export const warehouseOptions = mockWarehouses.map(w => ({ id: w.id, label: w.name }))
 
 export const mockLedger = [
-  { id: 1, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', operation: 'Receipt', change: 50, timestamp: '2026-09-26 09:12' },
-  { id: 2, product: 'Wireless Mouse', sku: 'MOU-002', warehouse: 'Warehouse 2', operation: 'Delivery', change: -12, timestamp: '2026-09-26 09:45' },
-  { id: 3, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', operation: 'Transfer Out', change: -20, timestamp: '2026-09-26 10:03' },
-  { id: 4, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Production Floor', operation: 'Transfer In', change: 20, timestamp: '2026-09-26 10:03' },
-  { id: 5, product: 'USB-C Cable', sku: 'CBL-004', warehouse: 'Warehouse 2', operation: 'Adjustment', change: -3, timestamp: '2026-09-26 10:30' },
-  { id: 6, product: 'Office Chair', sku: 'CHR-003', warehouse: 'Main Warehouse', operation: 'Receipt', change: 35, timestamp: '2026-09-26 11:15' },
+  { id: 1, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', category: 'Raw Material', operation: 'Receipt', status: 'Done', change: 50, timestamp: '2026-09-26 09:12' },
+  { id: 2, product: 'Wireless Mouse', sku: 'MOU-002', warehouse: 'Warehouse 2', category: 'Electronics', operation: 'Delivery', status: 'Done', change: -12, timestamp: '2026-09-26 09:45' },
+  { id: 3, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', category: 'Raw Material', operation: 'Internal', status: 'Done', change: -20, timestamp: '2026-09-26 10:03' },
+  { id: 4, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Production Floor', category: 'Raw Material', operation: 'Internal', status: 'Done', change: 20, timestamp: '2026-09-26 10:03' },
+  { id: 5, product: 'USB-C Cable', sku: 'CBL-004', warehouse: 'Warehouse 2', category: 'Electronics', operation: 'Adjustment', status: 'Done', change: -3, timestamp: '2026-09-26 10:30' },
+  { id: 6, product: 'Office Chair', sku: 'CHR-003', warehouse: 'Main Warehouse', category: 'Furniture', operation: 'Receipt', status: 'Waiting', change: 35, timestamp: '2026-09-26 11:15' },
+  { id: 7, product: 'Office Chair', sku: 'CHR-003', warehouse: 'Main Warehouse', category: 'Furniture', operation: 'Receipt', status: 'Draft', change: 10, timestamp: '2026-09-26 11:40' },
+  { id: 8, product: 'Wireless Mouse', sku: 'MOU-002', warehouse: 'Warehouse 2', category: 'Electronics', operation: 'Delivery', status: 'Cancelled', change: -5, timestamp: '2026-09-26 11:52' },
 ]
+
+export const filterOptions = {
+  documentTypes: ['Receipt', 'Delivery', 'Internal', 'Adjustment'],
+  statuses: ['Draft', 'Waiting', 'Ready', 'Done', 'Cancelled'],
+  warehouses: [...new Set(mockLedger.map(e => e.warehouse))],
+  categories: [...new Set(mockLedger.map(e => e.category))],
+}
 
 export function getDashboardStats() {
   const totalStock = mockProducts.reduce((sum, p) => sum + p.totalStock, 0)

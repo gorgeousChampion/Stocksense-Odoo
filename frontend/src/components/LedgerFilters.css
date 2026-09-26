@@ -1,0 +1,19 @@
+.filters-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filters-bar select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: #334155;
+  background: #ffffff;
+}
+
+.filters-bar select:focus {
+  outline: none;
+  border-color: #047857;
+}
