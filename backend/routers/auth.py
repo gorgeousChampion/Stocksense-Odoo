@@ -9,15 +9,8 @@ from database import engine
 from models import User
 from schemas import RegisterRequest, LoginRequest, AuthResponse
 
-router = APIRouter(
-    prefix="/api/auth",
-    tags=["Authentication"]
-)
 
-
-def get_db():
-    with Session(engine) as db:
-        yield db
+router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
 def hash_password(password: str) -> str:
@@ -48,6 +41,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
             calculated_hash,
             password_hash
         )
+
     except ValueError:
         return False
 
@@ -55,8 +49,11 @@ def verify_password(password: str, stored_hash: str) -> bool:
 @router.post("/register", response_model=AuthResponse)
 def register_user(user: RegisterRequest):
     with Session(engine) as db:
+
         existing_user = db.scalar(
-            select(User).where(User.email == user.email.lower())
+            select(User).where(
+                User.email == user.email.lower()
+            )
         )
 
         if existing_user:
@@ -66,7 +63,8 @@ def register_user(user: RegisterRequest):
             )
 
         new_user = User(
-            name=user.name,
+            first_name=user.first_name,
+            last_name=user.last_name,
             email=user.email.lower(),
             password_hash=hash_password(user.password)
         )
@@ -76,6 +74,7 @@ def register_user(user: RegisterRequest):
         db.refresh(new_user)
 
         token = secrets.token_urlsafe(32)
+
         new_user.auth_token = token
 
         db.commit()
@@ -84,7 +83,8 @@ def register_user(user: RegisterRequest):
             "message": "Registration successful",
             "token": token,
             "user_id": new_user.id,
-            "name": new_user.name,
+            "first_name": new_user.first_name,
+            "last_name": new_user.last_name,
             "email": new_user.email
         }
 
@@ -92,8 +92,11 @@ def register_user(user: RegisterRequest):
 @router.post("/login", response_model=AuthResponse)
 def login_user(user: LoginRequest):
     with Session(engine) as db:
+
         existing_user = db.scalar(
-            select(User).where(User.email == user.email.lower())
+            select(User).where(
+                User.email == user.email.lower()
+            )
         )
 
         if not existing_user:
@@ -112,6 +115,7 @@ def login_user(user: LoginRequest):
             )
 
         token = secrets.token_urlsafe(32)
+
         existing_user.auth_token = token
 
         db.commit()
@@ -120,7 +124,8 @@ def login_user(user: LoginRequest):
             "message": "Login successful",
             "token": token,
             "user_id": existing_user.id,
-            "name": existing_user.name,
+            "first_name": existing_user.first_name,
+            "last_name": existing_user.last_name,
             "email": existing_user.email
         }
 
@@ -128,13 +133,17 @@ def login_user(user: LoginRequest):
 @router.post("/logout")
 def logout_user(token: str):
     with Session(engine) as db:
+
         user = db.scalar(
-            select(User).where(User.auth_token == token)
+            select(User).where(
+                User.auth_token == token
+            )
         )
 
         if user:
             user.auth_token = None
             db.commit()
 
-        return {"message": "Logged out successfully"}
-        
+        return {
+            "message": "Logged out successfully"
+        }

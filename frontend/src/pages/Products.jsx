@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from 'react'
-import { Search, Plus, X } from 'lucide-react'
+import { Search, Plus, X, Trash2 } from 'lucide-react'
 import './Products.css'
 
 const API_BASE = 'http://localhost:8000/api'
@@ -9,6 +8,7 @@ export default function Products() {
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+
   const [form, setForm] = useState({
     sku: '',
     name: '',
@@ -17,6 +17,7 @@ export default function Products() {
     reorderLevel: '',
     totalStock: ''
   })
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -37,7 +38,10 @@ export default function Products() {
       const productsWithStock = productsData.map(product => {
         const totalStock = stockData
           .filter(item => item.product_id === product.id)
-          .reduce((total, item) => total + item.quantity, 0)
+          .reduce(
+            (total, item) => total + item.quantity,
+            0
+          )
 
         return {
           ...product,
@@ -48,7 +52,9 @@ export default function Products() {
       setProducts(productsWithStock)
     } catch (err) {
       console.error('Failed to fetch products:', err)
-      setError('Could not load products. Check the backend connection.')
+      setError(
+        'Could not load products. Check the backend connection.'
+      )
     } finally {
       setLoading(false)
     }
@@ -59,24 +65,40 @@ export default function Products() {
   }, [])
 
   const filtered = products.filter(product =>
-    product.name.toLowerCase().includes(search.toLowerCase()) ||
-    product.sku.toLowerCase().includes(search.toLowerCase())
+    product.name
+      .toLowerCase()
+      .includes(search.toLowerCase()) ||
+    product.sku
+      .toLowerCase()
+      .includes(search.toLowerCase())
   )
 
   function getStatus(product) {
     if (product.totalStock === 0) {
-      return { label: 'Out of stock', className: 'status-critical' }
+      return {
+        label: 'Out of stock',
+        className: 'status-critical'
+      }
     }
 
     if (product.totalStock <= product.reorder_level) {
-      return { label: 'Low stock', className: 'status-warning' }
+      return {
+        label: 'Low stock',
+        className: 'status-warning'
+      }
     }
 
-    return { label: 'In stock', className: 'status-ok' }
+    return {
+      label: 'In stock',
+      className: 'status-ok'
+    }
   }
 
   function updateField(field, value) {
-    setForm(prev => ({ ...prev, [field]: value }))
+    setForm(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
   function openModal() {
@@ -88,6 +110,7 @@ export default function Products() {
       reorderLevel: '',
       totalStock: ''
     })
+
     setError('')
     setShowModal(true)
   }
@@ -103,24 +126,30 @@ export default function Products() {
     setError('')
 
     try {
-      const response = await fetch(`${API_BASE}/products/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sku: form.sku,
-          name: form.name,
-          category: form.category,
-          unit: form.unit || 'pcs',
-          reorder_level: Number(form.reorderLevel) || 0
-        })
-      })
+      const response = await fetch(
+        `${API_BASE}/products/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sku: form.sku,
+            name: form.name,
+            category: form.category,
+            unit: form.unit || 'pcs',
+            reorder_level:
+              Number(form.reorderLevel) || 0
+          })
+        }
+      )
 
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.detail || 'Failed to create product')
+        setError(
+          data.detail || 'Failed to create product'
+        )
         return
       }
 
@@ -132,12 +161,48 @@ export default function Products() {
     }
   }
 
+  async function handleDelete(product) {
+    const confirmed = window.confirm(
+      `Delete ${product.name} (${product.sku})?\n\nThe product will disappear from active inventory, but its movement and operation records will be preserved.`
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/products/${product.id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.detail || 'Failed to delete product')
+        return
+      }
+
+      setProducts(prev =>
+        prev.filter(item => item.id !== product.id)
+      )
+    } catch (err) {
+      console.error('Failed to delete product:', err)
+      alert('Could not connect to the backend')
+    }
+  }
+
   return (
     <div className="products-page">
       <div className="page-header">
         <h1>Products</h1>
 
-        <button className="btn-primary" onClick={openModal}>
+        <button
+          className="btn-primary"
+          onClick={openModal}
+        >
           <Plus size={16} />
           New Product
         </button>
@@ -164,19 +229,26 @@ export default function Products() {
             <th>Reorder Level</th>
             <th>Total Stock</th>
             <th>Status</th>
+            <th></th>
           </tr>
         </thead>
 
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={7} className="empty-state">
+              <td
+                colSpan={8}
+                className="empty-state"
+              >
                 Loading products...
               </td>
             </tr>
           ) : filtered.length === 0 ? (
             <tr>
-              <td colSpan={7} className="empty-state">
+              <td
+                colSpan={8}
+                className="empty-state"
+              >
                 No products found
               </td>
             </tr>
@@ -187,15 +259,49 @@ export default function Products() {
               return (
                 <tr key={product.id}>
                   <td>{product.sku}</td>
+
                   <td>{product.name}</td>
+
                   <td>{product.category}</td>
+
                   <td>{product.unit}</td>
+
                   <td>{product.reorder_level}</td>
+
                   <td>{product.totalStock}</td>
+
                   <td>
-                    <span className={`status-badge ${status.className}`}>
+                    <span
+                      className={`status-badge ${status.className}`}
+                    >
                       {status.label}
                     </span>
+                  </td>
+
+                  <td
+                    style={{
+                      textAlign: 'right',
+                      width: 45
+                    }}
+                  >
+                    <button
+                      onClick={() =>
+                        handleDelete(product)
+                      }
+                      title="Delete product"
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        color: '#94a3b8',
+                        cursor: 'pointer',
+                        padding: 6,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </td>
                 </tr>
               )
@@ -224,12 +330,21 @@ export default function Products() {
               </button>
             </div>
 
-            <form className="modal-form" onSubmit={handleCreate}>
+            <form
+              className="modal-form"
+              onSubmit={handleCreate}
+            >
               <div className="form-row">
                 <label>SKU</label>
+
                 <input
                   value={form.sku}
-                  onChange={e => updateField('sku', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'sku',
+                      e.target.value
+                    )
+                  }
                   placeholder="e.g. STL-005"
                   required
                 />
@@ -237,9 +352,15 @@ export default function Products() {
 
               <div className="form-row">
                 <label>Name</label>
+
                 <input
                   value={form.name}
-                  onChange={e => updateField('name', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'name',
+                      e.target.value
+                    )
+                  }
                   placeholder="Product name"
                   required
                 />
@@ -247,9 +368,15 @@ export default function Products() {
 
               <div className="form-row">
                 <label>Category</label>
+
                 <input
                   value={form.category}
-                  onChange={e => updateField('category', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'category',
+                      e.target.value
+                    )
+                  }
                   placeholder="e.g. Electronics"
                   required
                 />
@@ -257,36 +384,68 @@ export default function Products() {
 
               <div className="form-row">
                 <label>Unit of Measure</label>
+
                 <select
                   value={form.unit}
-                  onChange={e => updateField('unit', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'unit',
+                      e.target.value
+                    )
+                  }
                 >
-                  <option value="">Select unit</option>
-                  <option value="pcs">Pieces (pcs)</option>
-                  <option value="kg">Kilograms (kg)</option>
-                  <option value="ltr">Litres (ltr)</option>
-                  <option value="box">Box</option>
+                  <option value="">
+                    Select unit
+                  </option>
+
+                  <option value="pcs">
+                    Pieces (pcs)
+                  </option>
+
+                  <option value="kg">
+                    Kilograms (kg)
+                  </option>
+
+                  <option value="ltr">
+                    Litres (ltr)
+                  </option>
+
+                  <option value="box">
+                    Box
+                  </option>
                 </select>
               </div>
 
               <div className="form-row">
                 <label>Reorder Level</label>
+
                 <input
                   type="number"
                   min="0"
                   value={form.reorderLevel}
-                  onChange={e => updateField('reorderLevel', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'reorderLevel',
+                      e.target.value
+                    )
+                  }
                   placeholder="0"
                 />
               </div>
 
               <div className="form-row">
                 <label>Initial Stock</label>
+
                 <input
                   type="number"
                   min="0"
                   value={form.totalStock}
-                  onChange={e => updateField('totalStock', e.target.value)}
+                  onChange={e =>
+                    updateField(
+                      'totalStock',
+                      e.target.value
+                    )
+                  }
                   placeholder="0"
                 />
               </div>
@@ -297,7 +456,10 @@ export default function Products() {
                 </div>
               )}
 
-              <button type="submit" className="btn-primary">
+              <button
+                type="submit"
+                className="btn-primary"
+              >
                 Create Product
               </button>
             </form>

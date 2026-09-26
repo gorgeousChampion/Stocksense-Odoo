@@ -1,7 +1,5 @@
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer, ForeignKey
-from sqlalchemy import DateTime
 from datetime import datetime
 
 
@@ -15,19 +13,31 @@ class Product(Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, index=True
     )
-    name: Mapped[str] = mapped_column(String(150), nullable=False)
+
+    name: Mapped[str] = mapped_column(
+        String(150), nullable=False
+    )
+
     sku: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, index=True
     )
+
     category: Mapped[str] = mapped_column(
         String(100), nullable=False
     )
+
     unit: Mapped[str] = mapped_column(
         String(20), nullable=False, default="pcs"
     )
+
     reorder_level: Mapped[int] = mapped_column(
         Integer, nullable=False, default=10
     )
+
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+
 
 class Warehouse(Base):
     __tablename__ = "warehouses"
@@ -35,12 +45,15 @@ class Warehouse(Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, index=True
     )
+
     name: Mapped[str] = mapped_column(
         String(100), nullable=False
     )
+
     location: Mapped[str] = mapped_column(
         String(200), nullable=False
     )
+
 
 class StockLevel(Base):
     __tablename__ = "stock_levels"
@@ -60,6 +73,7 @@ class StockLevel(Base):
     quantity: Mapped[int] = mapped_column(
         Integer, nullable=False, default=0
     )
+
 
 class StockMovement(Base):
     __tablename__ = "stock_movements"
@@ -91,6 +105,7 @@ class StockMovement(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
+
 
 class InventoryOperation(Base):
     __tablename__ = "inventory_operations"
@@ -127,6 +142,7 @@ class InventoryOperation(Base):
         DateTime, default=datetime.utcnow, nullable=False
     )
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -134,8 +150,12 @@ class User(Base):
         Integer, primary_key=True, index=True
     )
 
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False
+    first_name: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )
+
+    last_name: Mapped[str] = mapped_column(
+        String(50), nullable=False
     )
 
     email: Mapped[str] = mapped_column(
@@ -153,4 +173,3 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
-

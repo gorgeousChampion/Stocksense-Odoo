@@ -121,9 +121,10 @@ class InventoryOperationResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
-
+    
 class RegisterRequest(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
+    first_name: str = Field(min_length=1, max_length=50)
+    last_name: str = Field(min_length=1, max_length=50)
     email: str = Field(min_length=3, max_length=150)
     password: str = Field(min_length=6, max_length=100)
 
@@ -137,5 +138,6 @@ class AuthResponse(BaseModel):
     message: str
     token: str
     user_id: int
-    name: str
+    first_name: str
+    last_name: str
     email: str
