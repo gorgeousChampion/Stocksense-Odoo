@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from 'react'
 import {
   PackagePlus,
   PackageMinus,
   ArrowLeftRight,
-  ClipboardEdit
+  ClipboardEdit,
+  Clock
 } from 'lucide-react'
 import './Operations.css'
 import Toast from '../components/Toast'
@@ -20,6 +20,7 @@ export default function Operations() {
   const [products, setProducts] = useState([])
   const [warehouses, setWarehouses] = useState([])
   const [stock, setStock] = useState([])
+  const [inventoryOperations, setInventoryOperations] = useState([])
 
   const [activeTab, setActiveTab] = useState('receive')
   const [form, setForm] = useState({
@@ -32,28 +33,40 @@ export default function Operations() {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
-    Promise.all([
-      fetch('http://localhost:8000/api/products/'),
-      fetch('http://localhost:8000/api/warehouses/'),
-      fetch('http://localhost:8000/api/stock/')
-    ])
-      .then(async ([productsResponse, warehousesResponse, stockResponse]) => {
-        const productsData = await productsResponse.json()
-        const warehousesData = await warehousesResponse.json()
-        const stockData = await stockResponse.json()
-
-        setProducts(productsData)
-        setWarehouses(warehousesData)
-        setStock(stockData)
-      })
-      .catch(error => {
-        console.error('Failed to fetch operation data:', error)
-        setStatus({
-          type: 'error',
-          message: 'Failed to load products or warehouses'
-        })
-      })
+    loadData()
   }, [])
+
+  async function loadData() {
+    try {
+      const [
+        productsResponse,
+        warehousesResponse,
+        stockResponse,
+        operationsResponse
+      ] = await Promise.all([
+        fetch('http://localhost:8000/api/products/'),
+        fetch('http://localhost:8000/api/warehouses/'),
+        fetch('http://localhost:8000/api/stock/'),
+        fetch('http://localhost:8000/api/inventory-operations/')
+      ])
+
+      const productsData = await productsResponse.json()
+      const warehousesData = await warehousesResponse.json()
+      const stockData = await stockResponse.json()
+      const operationsData = await operationsResponse.json()
+
+      setProducts(productsData)
+      setWarehouses(warehousesData)
+      setStock(stockData)
+      setInventoryOperations(operationsData)
+    } catch (error) {
+      console.error('Failed to fetch operation data:', error)
+      setStatus({
+        type: 'error',
+        message: 'Failed to load products or warehouses'
+      })
+    }
+  }
 
   function updateField(field, value) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -202,19 +215,69 @@ export default function Operations() {
 
       setTimeout(() => setStatus(null), 3000)
 
-      // Refresh stock after the operation so future adjustments
-      // use the latest database value.
-      const stockResponse = await fetch(
-        'http://localhost:8000/api/stock/'
-      )
-
-      if (stockResponse.ok) {
-        const stockData = await stockResponse.json()
-        setStock(stockData)
-      }
+      await loadData()
     } catch (error) {
       console.error('Operation failed:', error)
+      showError('Could not connect to the backend')
+    }
+  }
 
+  async function validateOperation(id) {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/inventory-operations/${id}/validate`,
+        {
+          method: 'POST'
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showError(data.detail || 'Could not validate operation')
+        return
+      }
+
+      setStatus({
+        type: 'success',
+        message: 'Operation validated successfully'
+      })
+
+      await loadData()
+
+      setTimeout(() => setStatus(null), 3000)
+    } catch (error) {
+      console.error('Validation failed:', error)
+      showError('Could not connect to the backend')
+    }
+  }
+
+  async function cancelOperation(id) {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/inventory-operations/${id}/cancel`,
+        {
+          method: 'POST'
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showError(data.detail || 'Could not cancel operation')
+        return
+      }
+
+      setStatus({
+        type: 'success',
+        message: 'Operation canceled'
+      })
+
+      await loadData()
+
+      setTimeout(() => setStatus(null), 3000)
+    } catch (error) {
+      console.error('Cancellation failed:', error)
       showError('Could not connect to the backend')
     }
   }
@@ -231,6 +294,20 @@ export default function Operations() {
       reason: ''
     })
   }
+
+  function getProductName(productId) {
+    const product = products.find(p => p.id === productId)
+    return product ? `${product.name} (${product.sku})` : `Product #${productId}`
+  }
+
+  function getWarehouseName(warehouseId) {
+    const warehouse = warehouses.find(w => w.id === warehouseId)
+    return warehouse ? warehouse.name : `Warehouse #${warehouseId}`
+  }
+
+  const pendingOperations = inventoryOperations.filter(
+    operation => operation.status === 'Waiting'
+  )
 
   return (
     <div className="operations-page">
@@ -342,6 +419,76 @@ export default function Operations() {
           Submit
         </button>
       </form>
+
+      <div className="dashboard-section">
+        <div className="section-title">
+          <Clock size={16} />
+          Pending Operations
+        </div>
+
+        {pendingOperations.length === 0 ? (
+          <div className="empty-state">
+            No pending operations
+          </div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Product</th>
+                <th>Warehouse</th>
+                <th>Quantity</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {pendingOperations.map(operation => (
+                <tr key={operation.id}>
+                  <td>{operation.operation_type}</td>
+
+                  <td>
+                    {getProductName(operation.product_id)}
+                  </td>
+
+                  <td>
+                    {getWarehouseName(operation.warehouse_id)}
+                  </td>
+
+                  <td>{operation.quantity}</td>
+
+                  <td>
+                    {operation.due_date
+                      ? new Date(operation.due_date).toLocaleString()
+                      : 'No due date'}
+                  </td>
+
+                  <td>{operation.status}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={() => validateOperation(operation.id)}
+                    >
+                      Validate
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => cancelOperation(operation.id)}
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       <Toast
         message={status?.message}
