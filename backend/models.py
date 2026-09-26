@@ -91,3 +91,38 @@ class StockMovement(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
+
+class InventoryOperation(Base):
+    __tablename__ = "inventory_operations"
+
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, index=True
+    )
+
+    operation_type: Mapped[str] = mapped_column(
+        String(30), nullable=False
+    )
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id"), nullable=False
+    )
+
+    warehouse_id: Mapped[int] = mapped_column(
+        ForeignKey("warehouses.id"), nullable=False
+    )
+
+    quantity: Mapped[int] = mapped_column(
+        Integer, nullable=False
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="Waiting"
+    )
+
+    due_date: Mapped[datetime | None] = mapped_column(
+        DateTime, nullable=True
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )

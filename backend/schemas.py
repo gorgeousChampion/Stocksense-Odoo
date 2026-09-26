@@ -101,3 +101,23 @@ class AdjustmentResponse(BaseModel):
     warehouse_id: int
     quantity_adjusted: int
     new_stock_quantity: int
+
+class InventoryOperationCreate(BaseModel):
+    operation_type: str = Field(pattern="^(RECEIPT|DELIVERY)$")
+    product_id: int
+    warehouse_id: int
+    quantity: int = Field(gt=0)
+    due_date: datetime | None = None
+
+
+class InventoryOperationResponse(BaseModel):
+    id: int
+    operation_type: str
+    product_id: int
+    warehouse_id: int
+    quantity: int
+    status: str
+    due_date: datetime | None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

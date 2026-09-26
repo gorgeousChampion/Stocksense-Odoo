@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { Boxes, Package, AlertTriangle, Activity } from 'lucide-react'
 import './Dashboard.css'
@@ -8,24 +7,34 @@ export default function Dashboard() {
   const [stock, setStock] = useState([])
   const [movements, setMovements] = useState([])
   const [warehouses, setWarehouses] = useState([])
+  const [inventoryOperations, setInventoryOperations] = useState([])
 
   useEffect(() => {
     Promise.all([
       fetch('http://localhost:8000/api/products/'),
       fetch('http://localhost:8000/api/stock/'),
       fetch('http://localhost:8000/api/movements/'),
-      fetch('http://localhost:8000/api/warehouses/')
+      fetch('http://localhost:8000/api/warehouses/'),
+      fetch('http://localhost:8000/api/inventory-operations/')
     ])
-      .then(async ([productsResponse, stockResponse, movementsResponse, warehousesResponse]) => {
+      .then(async ([
+        productsResponse,
+        stockResponse,
+        movementsResponse,
+        warehousesResponse,
+        operationsResponse
+      ]) => {
         const productsData = await productsResponse.json()
         const stockData = await stockResponse.json()
         const movementsData = await movementsResponse.json()
         const warehousesData = await warehousesResponse.json()
+        const operationsData = await operationsResponse.json()
 
         setProducts(productsData)
         setStock(stockData)
         setMovements(movementsData)
         setWarehouses(warehousesData)
+        setInventoryOperations(operationsData)
       })
       .catch(error => {
         console.error('Failed to fetch dashboard data:', error)
@@ -47,6 +56,25 @@ export default function Dashboard() {
     return productStock <= product.reorder_level
   }).length
 
+  const pendingReceipts = inventoryOperations.filter(
+    operation =>
+      operation.operation_type === 'RECEIPT' &&
+      operation.status === 'Waiting'
+  ).length
+
+  const pendingDeliveries = inventoryOperations.filter(
+    operation =>
+      operation.operation_type === 'DELIVERY' &&
+      operation.status === 'Waiting'
+  ).length
+
+  const overdueOperations = inventoryOperations.filter(
+    operation =>
+      operation.status === 'Waiting' &&
+      operation.due_date &&
+      new Date(operation.due_date) < new Date()
+  ).length
+
   const recentMovements = movements.slice(0, 8).map(movement => {
     const product = products.find(
       product => product.id === movement.product_id
@@ -67,13 +95,17 @@ export default function Dashboard() {
 
     return {
       id: movement.id,
-      sku: product ? product.sku : `Product #${movement.product_id}`,
+      sku: product
+        ? product.sku
+        : `Product #${movement.product_id}`,
       warehouse: warehouse
         ? warehouse.name
         : `Warehouse #${movement.warehouse_id}`,
       operation: movement.movement_type,
       change,
-      timestamp: new Date(movement.created_at).toLocaleString()
+      timestamp: new Date(
+        movement.created_at
+      ).toLocaleString()
     }
   })
 
@@ -94,6 +126,22 @@ export default function Dashboard() {
       icon: AlertTriangle,
       warn: lowStockCount > 0
     },
+    {
+      label: 'Pending Receipts',
+      value: pendingReceipts,
+      icon: Package
+    },
+    {
+      label: 'Pending Deliveries',
+      value: pendingDeliveries,
+      icon: Package
+    },
+    {
+      label: 'Overdue Operations',
+      value: overdueOperations,
+      icon: AlertTriangle,
+      warn: overdueOperations > 0
+    }
   ]
 
   return (
