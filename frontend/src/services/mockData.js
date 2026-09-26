@@ -15,12 +15,12 @@ export const productOptions = mockProducts.map(p => ({ id: p.id, label: `${p.sku
 export const warehouseOptions = mockWarehouses.map(w => ({ id: w.id, label: w.name }))
 
 export const mockLedger = [
-  { id: 1, product: 'Steel Rods', warehouse: 'Main Warehouse', operation: 'Receipt', change: 50, timestamp: '2026-09-26 09:12' },
-  { id: 2, product: 'Wireless Mouse', warehouse: 'Warehouse 2', operation: 'Delivery', change: -12, timestamp: '2026-09-26 09:45' },
-  { id: 3, product: 'Steel Rods', warehouse: 'Main Warehouse', operation: 'Transfer Out', change: -20, timestamp: '2026-09-26 10:03' },
-  { id: 4, product: 'Steel Rods', warehouse: 'Production Floor', operation: 'Transfer In', change: 20, timestamp: '2026-09-26 10:03' },
-  { id: 5, product: 'USB-C Cable', warehouse: 'Warehouse 2', operation: 'Adjustment', change: -3, timestamp: '2026-09-26 10:30' },
-  { id: 6, product: 'Office Chair', warehouse: 'Main Warehouse', operation: 'Receipt', change: 35, timestamp: '2026-09-26 11:15' },
+  { id: 1, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', operation: 'Receipt', change: 50, timestamp: '2026-09-26 09:12' },
+  { id: 2, product: 'Wireless Mouse', sku: 'MOU-002', warehouse: 'Warehouse 2', operation: 'Delivery', change: -12, timestamp: '2026-09-26 09:45' },
+  { id: 3, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Main Warehouse', operation: 'Transfer Out', change: -20, timestamp: '2026-09-26 10:03' },
+  { id: 4, product: 'Steel Rods', sku: 'STL-001', warehouse: 'Production Floor', operation: 'Transfer In', change: 20, timestamp: '2026-09-26 10:03' },
+  { id: 5, product: 'USB-C Cable', sku: 'CBL-004', warehouse: 'Warehouse 2', operation: 'Adjustment', change: -3, timestamp: '2026-09-26 10:30' },
+  { id: 6, product: 'Office Chair', sku: 'CHR-003', warehouse: 'Main Warehouse', operation: 'Receipt', change: 35, timestamp: '2026-09-26 11:15' },
 ]
 
 export function getDashboardStats() {

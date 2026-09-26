@@ -39,7 +39,7 @@ export default function Dashboard() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Product</th>
+              <th>SKU</th>
               <th>Warehouse</th>
               <th>Operation</th>
               <th>Change</th>
@@ -49,7 +49,7 @@ export default function Dashboard() {
           <tbody>
             {recentMovements.map(m => (
               <tr key={m.id}>
-                <td>{m.product}</td>
+                <td>{m.sku}</td>
                 <td>{m.warehouse}</td>
                 <td>{m.operation}</td>
                 <td className={m.change >= 0 ? 'change-positive' : 'change-negative'}>

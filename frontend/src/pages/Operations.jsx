@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { PackagePlus, PackageMinus, ArrowLeftRight, ClipboardEdit } from 'lucide-react'
 import { productOptions, warehouseOptions } from '../services/mockData'
 import './Operations.css'
+import Toast from '../components/Toast'
 
 const TABS = [
   { key: 'receive', label: 'Receive Stock', icon: PackagePlus },
@@ -24,14 +25,17 @@ export default function Operations() {
 
     if (!form.product || !form.warehouse || !form.quantity) {
       setStatus({ type: 'error', message: 'Please fill in all required fields' })
+      setTimeout(() => setStatus(null), 3000)
       return
     }
     if (activeTab === 'transfer' && !form.toWarehouse) {
       setStatus({ type: 'error', message: 'Please select a destination warehouse' })
+      setTimeout(() => setStatus(null), 3000)
       return
     }
     if (Number(form.quantity) <= 0) {
       setStatus({ type: 'error', message: 'Quantity must be greater than zero' })
+      setTimeout(() => setStatus(null), 3000)
       return
     }
 
@@ -39,6 +43,7 @@ export default function Operations() {
     // e.g. axios.post('/api/operations/receipts', form)
     setStatus({ type: 'success', message: `${TABS.find(t => t.key === activeTab).label} recorded (mock, not yet sent to backend)` })
     setForm({ product: '', warehouse: '', toWarehouse: '', quantity: '', reason: '' })
+    setTimeout(() => setStatus(null), 3000)
   }
 
   function switchTab(key) {
@@ -122,12 +127,11 @@ export default function Operations() {
           </div>
         )}
 
-        {status && (
-          <div className={`form-status ${status.type}`}>{status.message}</div>
-        )}
 
         <button type="submit" className="btn-primary">Submit</button>
       </form>
+
+      <Toast message={status?.message} type={status?.type} />
     </div>
   )
 }

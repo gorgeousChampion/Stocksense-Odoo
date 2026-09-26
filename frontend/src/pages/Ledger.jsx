@@ -31,7 +31,7 @@ export default function Ledger() {
       <table className="data-table">
         <thead>
           <tr>
-            <th>Product</th>
+            <th>SKU</th>
             <th>Warehouse</th>
             <th>Operation</th>
             <th>Quantity Change</th>
@@ -46,7 +46,7 @@ export default function Ledger() {
           ) : (
             filtered.map(entry => (
               <tr key={entry.id}>
-                <td>{entry.product}</td>
+                <td>{entry.sku}</td>
                 <td>{entry.warehouse}</td>
                 <td>{entry.operation}</td>
                 <td className={entry.change >= 0 ? 'change-positive' : 'change-negative'}>
