@@ -12,7 +12,7 @@ export default function AppLayout() {
       <aside className="sidebar">
         <div className="sidebar-brand">StockSense</div>
         <nav className="sidebar-nav">
-          <NavLink to="/" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
+          <NavLink to="/dashboard" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
             <LayoutDashboard size={18} />
             <span>Dashboard</span>
           </NavLink>

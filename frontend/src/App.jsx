@@ -6,13 +6,15 @@ import Settings from './pages/Settings'
 import Operations from './pages/Operations'
 import Ledger from './pages/Ledger'
 import RiskCenter from './pages/RiskCenter'
+import Login from './pages/Login'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/operations" element={<Operations />} />
