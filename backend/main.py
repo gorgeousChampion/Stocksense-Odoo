@@ -8,6 +8,7 @@ from routers.products import router as products_router
 from routers.stock import router as stock_router
 from routers.operations import router as operations_router
 from routers.movements import router as movements_router
+from routers.inventory_operations import router as inventory_operations_router
 
 app = FastAPI(title="StockSense API")
 
@@ -24,6 +25,7 @@ app.include_router(warehouses_router)
 app.include_router(stock_router)
 app.include_router(operations_router)
 app.include_router(movements_router)
+app.include_router(inventory_operations_router)
 
 Base.metadata.create_all(bind=engine)
 
