@@ -22,3 +22,11 @@ export const mockLedger = [
   { id: 5, product: 'USB-C Cable', warehouse: 'Warehouse 2', operation: 'Adjustment', change: -3, timestamp: '2026-09-26 10:30' },
   { id: 6, product: 'Office Chair', warehouse: 'Main Warehouse', operation: 'Receipt', change: 35, timestamp: '2026-09-26 11:15' },
 ]
+
+export function getDashboardStats() {
+  const totalStock = mockProducts.reduce((sum, p) => sum + p.totalStock, 0)
+  const totalSkus = mockProducts.length
+  const lowStockCount = mockProducts.filter(p => p.totalStock <= p.reorderLevel).length
+  const recentMovements = mockLedger.slice(-4).reverse()
+  return { totalStock, totalSkus, lowStockCount, recentMovements }
+}
