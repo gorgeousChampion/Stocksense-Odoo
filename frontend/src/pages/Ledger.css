@@ -1,0 +1,79 @@
+.ledger-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  max-width: 360px;
+  color: #64748b;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  flex: 1;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.search-bar input::placeholder {
+  color: #94a3b8;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-state {
+  text-align: center;
+  color: #94a3b8;
+  padding: 24px;
+}
+
+.data-table td.change-positive {
+  color: #047857;
+  font-weight: 600;
+}
+
+.data-table td.change-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
