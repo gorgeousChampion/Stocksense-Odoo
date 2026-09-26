@@ -1,5 +1,5 @@
+from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
-
 
 class ProductCreate(BaseModel):
     name: str = Field(min_length=1, max_length=150)
@@ -44,4 +44,60 @@ class ReceiptResponse(BaseModel):
     product_id: int
     warehouse_id: int
     quantity_received: int
+    new_stock_quantity: int
+
+class DeliveryCreate(BaseModel):
+    product_id: int
+    warehouse_id: int
+    quantity: int = Field(gt=0)
+    note: str | None = Field(default=None, max_length=300)
+
+
+class DeliveryResponse(BaseModel):
+    message: str
+    product_id: int
+    warehouse_id: int
+    quantity_delivered: int
+    new_stock_quantity: int
+
+class MovementResponse(BaseModel):
+    id: int
+    product_id: int
+    warehouse_id: int
+    movement_type: str
+    quantity: int
+    note: str | None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TransferCreate(BaseModel):
+    product_id: int
+    source_warehouse_id: int
+    destination_warehouse_id: int
+    quantity: int = Field(gt=0)
+    note: str | None = Field(default=None, max_length=300)
+
+
+class TransferResponse(BaseModel):
+    message: str
+    product_id: int
+    source_warehouse_id: int
+    destination_warehouse_id: int
+    quantity_transferred: int
+    source_new_stock_quantity: int
+    destination_new_stock_quantity: int
+
+class AdjustmentCreate(BaseModel):
+    product_id: int
+    warehouse_id: int
+    quantity: int
+    note: str | None = Field(default=None, max_length=300)
+
+
+class AdjustmentResponse(BaseModel):
+    message: str
+    product_id: int
+    warehouse_id: int
+    quantity_adjusted: int
     new_stock_quantity: int
